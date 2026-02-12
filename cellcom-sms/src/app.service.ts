@@ -1,3 +1,4 @@
+import { SmsResponseEntity } from './entities/sms-response.entity';
 import { DatabaseService } from './database/database.service';
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
@@ -46,7 +47,7 @@ export class AppService {
         try {
           const response = await firstValueFrom(
             this.http.get(
-              `https://cellsms.cellcom.co.il/SmsGate/SmsGate2.asmx/SendSmsEx?username=BINMAN1&password=BINMAN1@&target=${phone}&source=0522199958&message=${encodeURIComponent(utfMessage)}&pushUrl=&validity=1440&replace=false&immediate=false&isBinary=false&deliveryReceipt=true&maxSegments=20`,
+              `https://cellsms.cellcom.co.il/SmsGate/SmsGate2.asmx/SendSmsEx?username=BINMAN1&password=BINMAN1@&target=${phone}&source=0529991124&message=${encodeURIComponent(utfMessage)}&pushUrl=&validity=1440&replace=false&immediate=false&isBinary=false&deliveryReceipt=true&maxSegments=20`,
             ),
           );
 
@@ -56,11 +57,13 @@ export class AppService {
           });
 
           const doc = parser.parse(response.data);
-          const sendSmsAck: SmsLogRecord[] = doc.ArrayOfSendSmsAck.SendSmsAck;
-          const messageId = sendSmsAck[0].MessageId.toString();
-          const errorCode = sendSmsAck[0].ErrorCode;
-          const messageIdInt = sendSmsAck[0].MessageIdInt;
-          const success = sendSmsAck[0].Success;
+          const sendSmsAck: SmsLogRecord = doc.ArrayOfSendSmsAck.SendSmsAck;
+          console.log(sendSmsAck);
+
+          const messageId = sendSmsAck.MessageId.toString();
+          const errorCode = sendSmsAck.ErrorCode;
+          const messageIdInt = sendSmsAck.MessageIdInt;
+          const success = sendSmsAck.Success;
 
           // Save to database
           await this.databaseService.saveSmsLog({
@@ -73,6 +76,7 @@ export class AppService {
             messageIdInt,
           });
         } catch (error) {
+          console.log(error.code);
           console.error(`Error sending SMS to ${phone}:`, error);
           // Save failed attempt to database
           await this.databaseService.saveSmsLog({
@@ -155,8 +159,7 @@ export class AppService {
     return this.databaseService.getSmsLogs(query);
   }
 
-  async saveSmsReponseLog(query) {
-    console.log('query', query);
+  async saveSmsReponseLog(query: SmsResponseEntity) {
     return this.databaseService.saveSmsResponseLog(query);
   }
 }

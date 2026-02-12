@@ -5,7 +5,6 @@ import api from "../api/api";
 
 export const getActivation = async (filter = ""): Promise<Activation[] | null> => {
   try {
-    console.log(filter);
     const response = await api.get("activations", { params: { filter } });
     if (response.data) {
       const validatedData = activationSchema.array().parse(response.data);
@@ -20,7 +19,7 @@ export const getActivation = async (filter = ""): Promise<Activation[] | null> =
 
 export const getActivationsDetails = async (filter: Partial<Activation> = {}): Promise<Activation[] | null> => {
   try {
-    const response = await api.get("activationsDetails", { params: { filter } });
+    const response = await api.get("activationsDetails", { params: { ...filter } });
     if (response.data) {
       const validatedData = activationSchema.array().parse(response.data);
       return validatedData;

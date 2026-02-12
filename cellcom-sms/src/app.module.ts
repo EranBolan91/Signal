@@ -21,7 +21,7 @@ import { SmsResponseEntity } from './entities/sms-response.entity';
       database: process.env.DB_PATH || './cellcom_sms.db',
       entities: [SmsLogEntity, ActivationEntity, SmsResponseEntity],
       synchronize: true,
-      logging: ['query', 'error'],
+      //logging: ['query', 'error'],
     }),
     DatabaseModule,
     CronJobModule,

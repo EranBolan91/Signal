@@ -15,15 +15,6 @@ interface SaveSmsLogDto extends Partial<SmsLogEntity> {
   phone: string;
 }
 
-interface SaveSmsResponseLogDto extends Partial<SmsResponseEntity> {
-  target: string;
-  source: string;
-  text: string;
-  text_utf8: string;
-  mob_type: string;
-  sm_no: string;
-}
-
 interface ActivationDto extends Partial<ActivationEntity> {
   activationId: string;
   date: Date;
@@ -65,10 +56,9 @@ export class DatabaseService {
   }
 
   async saveSmsResponseLog(
-    smsResponseLogDto: SaveSmsResponseLogDto,
+    smsResponseLogDto: SmsResponseEntity,
   ): Promise<SmsResponseEntity> {
     try {
-      console.log('smsResponseLogDto', smsResponseLogDto);
       const smsResponseLog =
         this.smsReponseRepository.create(smsResponseLogDto);
       return await this.smsReponseRepository.save(smsResponseLog);
@@ -126,35 +116,11 @@ export class DatabaseService {
     filter: Partial<ActivationEntity> = {},
   ): Promise<ActivationEntity[]> {
     const qb = this.activationRepository.createQueryBuilder('activation');
-    // Exact matches
-    if (filter.id) {
-      qb.andWhere('activation.activationId = :id', { id: filter.activationId });
+    if (filter.activationId) {
+      qb.andWhere('activation.activationId = :activationId', {
+        activationId: filter.activationId,
+      });
     }
-
-    // if (filter.status) {
-    //   qb.andWhere('activation.status = :status', {
-    //     status: filter.status,
-    //   });
-    // }
-
-    // if (filter.userId) {
-    //   qb.andWhere('activation.userId = :userId', {
-    //     userId: filter.userId,
-    //   });
-    // }
-
-    // Date range
-    // if (filter.createdFrom) {
-    //   qb.andWhere('activation.createdAt >= :from', {
-    //     from: filter.createdFrom,
-    //   });
-    // }
-
-    // if (filter.createdTo) {
-    //   qb.andWhere('activation.createdAt <= :to', {
-    //     to: filter.createdTo,
-    //   });
-    // }
 
     // Search (example: email / code / name)
     // if (filter.search) {
@@ -163,7 +129,6 @@ export class DatabaseService {
     //     { search: `%${filter.search}%` },
     //   );
     // }
-    console.log('qb', qb);
     qb.orderBy('activation.createdAt', 'DESC');
 
     return qb.getMany();

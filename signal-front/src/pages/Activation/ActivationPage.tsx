@@ -1,6 +1,6 @@
 import { Box, Button, Card, Stack, Typography, MenuItem, Select, CircularProgress, type SelectChangeEvent } from "@mui/material";
+import SmsLogsTable from "../../components/ActivationPage/SmsLogsTable";
 import StatsBar from "../../components/ActivationPage/StateBar";
-import CallsTable from "../../components/ActivationPage/Table";
 import { useNavigate, useParams } from "react-router-dom";
 import { useActivation } from "../../hooks/useActivation";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -45,12 +45,10 @@ const ActivationPage = () => {
         <Typography variant="h5">פרטי אירוע</Typography>
       </Stack>
 
-      {/* Stats */}
       <StatsBar />
 
-      {/* Table */}
       <Card sx={{ mt: 3 }}>
-        <CallsTable />
+        <SmsLogsTable />
       </Card>
     </Box>
   );

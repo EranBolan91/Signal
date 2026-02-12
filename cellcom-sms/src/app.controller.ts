@@ -22,7 +22,6 @@ export class AppController {
 
   @Get('activationsDetails')
   getActivationsDetails(@Query() query: any) {
-    console.log('query', query);
     return this.appService.getActivationDetails(query);
   }
 
@@ -33,6 +32,7 @@ export class AppController {
 
   @Get('smsResponse')
   saveSmsReponse(@Query() query: any) {
+    console.log(query);
     return this.appService.saveSmsReponseLog(query);
   }
 }

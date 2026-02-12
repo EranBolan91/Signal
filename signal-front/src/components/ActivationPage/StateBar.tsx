@@ -7,7 +7,7 @@ const StatsBar = () => {
 
   const { useGetActivationsDetails } = useActivation();
   const { data, isLoading } = useGetActivationsDetails({ getActivationsArgs: [{ activationId: id }], useQueryOptions: { enabled: Boolean(id) } });
-  console.log("data", data);
+
   return (
     <Card sx={{ p: 2, display: "flex", justifyContent: "flex-end" }}>
       {isLoading === true ? (
