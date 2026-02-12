@@ -56,7 +56,10 @@ export class DatabaseService {
   }
 
   async saveSmsResponseLog(
-    smsResponseLogDto: SmsResponseEntity,
+    smsResponseLogDto: Omit<
+      SmsResponseEntity,
+      'id' | 'activationId' | 'createdAt'
+    >,
   ): Promise<SmsResponseEntity> {
     try {
       const smsResponseLog =

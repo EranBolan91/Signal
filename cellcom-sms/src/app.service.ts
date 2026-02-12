@@ -8,6 +8,11 @@ import { randomInt } from 'crypto';
 import csv from 'csv-parser';
 import * as path from 'path';
 import * as fs from 'fs';
+import {
+  isSmsResponse,
+  isValidTextUtf8,
+  SOURCE_CELLCOM_PHONE,
+} from './utils/utils';
 
 type SmsLogRecord = {
   Success: boolean;
@@ -47,7 +52,7 @@ export class AppService {
         try {
           const response = await firstValueFrom(
             this.http.get(
-              `https://cellsms.cellcom.co.il/SmsGate/SmsGate2.asmx/SendSmsEx?username=BINMAN1&password=BINMAN1@&target=${phone}&source=0529991124&message=${encodeURIComponent(utfMessage)}&pushUrl=&validity=1440&replace=false&immediate=false&isBinary=false&deliveryReceipt=true&maxSegments=20`,
+              `https://cellsms.cellcom.co.il/SmsGate/SmsGate2.asmx/SendSmsEx?username=BINMAN1&password=BINMAN1@&target=${phone}&source=${SOURCE_CELLCOM_PHONE}&message=${encodeURIComponent(utfMessage)}&pushUrl=&validity=1440&replace=false&immediate=false&isBinary=false&deliveryReceipt=true&maxSegments=20`,
             ),
           );
 
@@ -159,7 +164,20 @@ export class AppService {
     return this.databaseService.getSmsLogs(query);
   }
 
-  async saveSmsReponseLog(query: SmsResponseEntity) {
-    return this.databaseService.saveSmsResponseLog(query);
+  async saveSmsReponseLog(
+    query: Omit<SmsResponseEntity, 'id' | 'activationId' | 'createdAt'>,
+  ) {
+    if (isSmsResponse(query) === true) {
+      if (
+        query.source === SOURCE_CELLCOM_PHONE &&
+        isValidTextUtf8(query.text_utf8)
+      ) {
+        return this.databaseService.saveSmsResponseLog(query);
+      } else {
+        return 'Not Cellcom phone source or wrong answer';
+      }
+    } else {
+      return 'Wrong type';
+    }
   }
 }

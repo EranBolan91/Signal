@@ -1,4 +1,5 @@
-import { Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { SmsResponseEntity } from './entities/sms-response.entity';
+import { Controller, Get, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -31,7 +32,10 @@ export class AppController {
   }
 
   @Get('smsResponse')
-  saveSmsReponse(@Query() query: any) {
+  saveSmsReponse(
+    @Query()
+    query: Omit<SmsResponseEntity, 'id' | 'activationId' | 'createdAt'>,
+  ) {
     console.log(query);
     return this.appService.saveSmsReponseLog(query);
   }
